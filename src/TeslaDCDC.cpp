@@ -24,16 +24,16 @@
  void TeslaDCDC::SetCanInterface(CanHardware* c)
 {
    can = c;
-   can->RegisterUserMessage(0x210);
+   can->RegisterUserMessage(0x202);
 }
 
 // Process voltage , current and temperature message from the Model s/x DCDC converter.
 void TeslaDCDC::DecodeCAN(int id, uint8_t *data)
 {
-   if (id == 0x210)
+   if (id == 0x202)
    {
-       Param::SetFloat(Param::U12V,data[5]*0.1);//Display 12v system voltage as read from the dcdc
-       Param::SetFloat(Param::I12V,data[4]);//Display 12v system current as read from the dcdc
+       Param::SetFloat(Param::U12V,((data[2]*256 + data[3] )*0.001));//Display 12v system voltage as read from the dcdc
+       Param::SetFloat(Param::I12V,(data[4]*256 + data[5] ));//Display 12v system current as read from the dcdc
        Param::SetFloat(Param::ChgTemp,(data[2]*0.5)-40);//Display dcdc coolant temp
 
    }
@@ -54,10 +54,15 @@ uint8_t bytes[8];
    if(timer500==5)
    {
 //   Payload=(byteswap((DCSetVal-9)*146)+0x4)<<8;//prob going to not work :)
-   bytes[0]=0x15;//just bodge it to 14.4v for getting running
-   bytes[1]=0x07;
+   bytes[0]=0x01;//just bodge it to 13.8v for getting running
+   bytes[1]=0x00;
    bytes[2]=0x00;
-   can->Send(0x3D8, bytes, 3);
+   bytes[3]=0x00;
+   bytes[4]=0x00;
+   bytes[5]=0x00;
+   bytes[6]=0x00;
+   bytes[7]=0x00;
+   can->Send(0x101, bytes, 8);
    timer500=0;
    }
 

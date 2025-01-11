@@ -558,6 +558,7 @@ void SpeedoStart()
     {
         tim_setup();//Fire up timer one...
         timer_disable_counter(TIM1);//...but disable until needed
+        timer_set_prescaler(TIM1,64); 
         Timer1Run = false;
     }
 }
@@ -566,7 +567,7 @@ void SpeedoSet(uint16_t speed)
 {
     if(Param::GetInt(Param::PumpPWM) == 1)//If Pump PWM out is set to Tacho
     {
-        float PulseGain = Param::GetInt(Param::TachoPPR);
+        float PulseGain = Param::GetFloat(Param::TachoPPR);
 
         if(speed == 0)
         {

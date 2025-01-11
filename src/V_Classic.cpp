@@ -34,8 +34,9 @@ void V_Classic::SetCanInterface(CanHardware* c)//Abusing the SetCanInterface as 
 void V_Classic::SetRevCounter(int speed)
 {
     uint16_t speed_input = speed;
-    speed_input = MAX(750, speed_input);//
-    speed_input = MIN(7500, speed_input);
+    // speed_input = MAX(10, speed_input);//
+    speed_input = MIN(13000, speed_input);
+    if(speed_input < 450 ) speed_input = 0; // ~5 km/h
 
     utils::SpeedoSet(speed_input);//Moved pwm control into Utils
 }
